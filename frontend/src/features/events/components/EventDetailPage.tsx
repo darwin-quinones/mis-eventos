@@ -15,7 +15,7 @@ import { SessionFormModal } from './SessionFormModal';
 export const EventDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { currentEvent, isLoading, fetchEvent, clearCurrentEvent } = useEventsStore();
+  const { currentEvent, isLoading, fetchEvent, fetchEvents, deleteEvent, clearCurrentEvent } = useEventsStore();
   const { isAuthenticated, user } = useAuthStore();
   const [isRegistered, setIsRegistered] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -26,8 +26,7 @@ export const EventDetailPage = () => {
 
   useEffect(() => {
     if (id) {
-      // Always force refresh on mount to get latest data (especially current_attendees)
-      fetchEvent(id, true);
+      fetchEvent(id);
       loadSessions(id);
     }
     return () => clearCurrentEvent();
@@ -86,8 +85,8 @@ export const EventDetailPage = () => {
     try {
       await apiClient.post(`/events/${id}/register`);
       setIsRegistered(true);
-      // Force refresh to get updated current_attendees
-      await fetchEvent(id, true);
+      // Refresh to get updated current_attendees
+      await fetchEvent(id);
       await showSuccessAlert(
         '¡Registro exitoso!',
         'Te has registrado correctamente al evento'
@@ -97,8 +96,8 @@ export const EventDetailPage = () => {
         'Error al registrarse',
         error.response?.data?.detail || 'No se pudo completar el registro'
       );
-      // Force refresh in case capacity changed
-      await fetchEvent(id, true);
+      // Refresh in case capacity changed
+      await fetchEvent(id);
     } finally {
       setIsRegistering(false);
     }
@@ -120,8 +119,8 @@ export const EventDetailPage = () => {
     try {
       await apiClient.delete(`/events/${id}/register`);
       setIsRegistered(false);
-      // Force refresh to get updated current_attendees
-      await fetchEvent(id, true);
+      // Refresh to get updated current_attendees
+      await fetchEvent(id);
       await showSuccessAlert(
         'Registro cancelado',
         'Has cancelado tu registro al evento'
@@ -131,8 +130,8 @@ export const EventDetailPage = () => {
         'Error al cancelar',
         error.response?.data?.detail || 'No se pudo cancelar el registro'
       );
-      // Force refresh in case something changed
-      await fetchEvent(id, true);
+      // Refresh in case something changed
+      await fetchEvent(id);
     } finally {
       setIsRegistering(false);
     }
@@ -154,7 +153,7 @@ export const EventDetailPage = () => {
         // Change status to cancelled instead of deleting
         try {
           await apiClient.put(`/events/${id}`, { status: 'cancelled' });
-          await fetchEvent(id, true);
+          await fetchEvent(id);
           await showSuccessAlert(
             'Evento cancelado',
             'El evento ha sido marcado como cancelado. Los asistentes podrán ver que fue cancelado.'
@@ -181,12 +180,13 @@ export const EventDetailPage = () => {
 
     showLoadingAlert('Eliminando evento...');
     try {
-      await apiClient.delete(`/events/${id}`);
+      await deleteEvent(id);
+      await fetchEvents(1, 20);
       await showSuccessAlert(
         'Evento eliminado',
         'El evento ha sido eliminado correctamente'
       );
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (error: any) {
       await showErrorAlert(
         'Error al eliminar',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEventsStore } from '../../../store/events.store';
 import { useAuthStore } from '../../../store/auth.store';
 import { EventCard } from './EventCard';
@@ -9,6 +9,7 @@ import { Button } from '../../../components/ui/Button';
 import { EventCardSkeleton } from '../../../components/ui/Skeleton';
 
 export const EventsPage = () => {
+  const location = useLocation();
   const { events, pagination, isLoading, fetchEvents } = useEventsStore();
   const { isAuthenticated, user } = useAuthStore();
   const [search, setSearch] = useState('');
@@ -17,6 +18,7 @@ export const EventsPage = () => {
   const [category, setCategory] = useState('');
   const [sortBy, setSortBy] = useState('date_asc');
 
+  // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -25,10 +27,10 @@ export const EventsPage = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Fetch when filters change or any navigation happens
   useEffect(() => {
-    // Force refresh on mount to ensure fresh data
-    fetchEvents(1, 20, debouncedSearch, status, category, true);
-  }, [debouncedSearch, status, category, fetchEvents]);
+    fetchEvents(1, 20, debouncedSearch, status, category);
+  }, [debouncedSearch, status, category, location.key, fetchEvents]);
 
   const handleClearFilters = () => {
     setStatus('');
@@ -130,7 +132,7 @@ export const EventsPage = () => {
           {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
-              onClick={() => fetchEvents(page, 20, debouncedSearch, status, category, true)}
+              onClick={() => fetchEvents(page, 20, debouncedSearch, status, category)}
               className={`
                 px-4 py-2 rounded-lg font-medium text-sm transition-colors
                 ${page === pagination.page

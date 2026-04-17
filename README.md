@@ -172,7 +172,6 @@ También creará 5 eventos de ejemplo con sesiones programadas.
 
 ⚠️ **IMPORTANTE**: Cambia estas contraseñas en producción!
 
-Ver [USUARIOS-DEMO.md](USUARIOS-DEMO.md) para más detalles.
 
 ## Estructura del Proyecto
 
@@ -377,20 +376,6 @@ ENVIRONMENT=development
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
-
-## Documentación Adicional
-
-- **Usuarios Demo**: [USUARIOS-DEMO.md](USUARIOS-DEMO.md) - Credenciales de acceso y roles
-- **Backend**: [backend/README.md](backend/README.md) - Guía detallada del backend
-- **Frontend**: [frontend/README.md](frontend/README.md) - Guía detallada del frontend
-- **Arquitectura Frontend**: [frontend/ARCHITECTURE.md](frontend/ARCHITECTURE.md) - Decisiones de diseño
-- **Base de Datos**: [GUIA-BASE-DE-DATOS.md](GUIA-BASE-DE-DATOS.md) - Configuración SQLite vs PostgreSQL
-- **Optimizaciones**: [OPTIMIZACIONES.md](OPTIMIZACIONES.md) - Lazy loading, imágenes, caching
-- **Roles y Permisos**: [SISTEMA-ROLES-PERMISOS.md](SISTEMA-ROLES-PERMISOS.md) - Sistema de roles completo
-- **Guía de Uso**: [GUIA-USO-EVENTOS.md](GUIA-USO-EVENTOS.md) - Cómo usar el CRUD de eventos
-- **Mejoras UX**: [MEJORAS-UX.md](MEJORAS-UX.md) - Alertas y confirmaciones
-- **Estado del Proyecto**: [COMPLETADO.md](COMPLETADO.md) - Resumen de implementación
-- **Requerimientos**: [requirements.md](requirements.md) - Especificación técnica
 
 ## Características Bonus Implementadas
 
