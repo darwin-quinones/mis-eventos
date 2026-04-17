@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  db_postgress:
+    container_name: db_postgress
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Sol_Mar12
+      - POSTGRES_DB=miseventos
+      - POSTGRES_HOST_AUTH_METHOD=md5
+    mem_limit: 1GB
+    networks:
+      - internal_red
+    shm_size: 1GB
+    ports:
+      - "30010:5432"
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: miseventos-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - BACKEND_CORS_ORIGINS=["http://localhost:3001"]
+      - DATABASE_URL=postgresql+psycopg2://postgres:Sol_Mar12@db_postgress:5432/miseventos
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - internal_red
+    command: >
+      sh -c "alembic upgrade head &&
+              python seed_db.py &&
+              uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - db_postgress
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: miseventos-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    restart: always
+volumes:
+  postgres_data:
+networks:
+  internal_red:

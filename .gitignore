@@ -1,0 +1,62 @@
+# Environment
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Backend Python
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.coverage
+backend/*.db
+backend/*.db-journal
+backend/.mypy_cache/
+backend/.ruff_cache/
+
+# Frontend Node
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/coverage/
+frontend/.vite/
+
+# Test coverage reports
+htmlcov/
+coverage/
+.coverage
+*.cover
+
+# Temporary files
+*.tmp
+*.temp
+~*
+
+# Documentation builds (si usas sphinx u otros)
+docs/_build/
+
+# Archivos de notas personales (opcional)
+notes.md
+TODO.md
+NOTES.md
+correo.md
+Prueba_Desarrollador_Backend.md
+requirements.md
+bonus.md
