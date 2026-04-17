@@ -21,8 +21,13 @@ class CacheControlMiddleware(BaseHTTPMiddleware):
         if request.method == "GET":
             path = request.url.path
 
+            # Authenticated requests should never be cached in browser/proxies
+            if "Authorization" in request.headers:
+                response.headers["Cache-Control"] = "private, no-cache, no-store, must-revalidate"
+                response.headers["Pragma"] = "no-cache"
+                response.headers["Expires"] = "0"
             # Public endpoints that can be cached
-            if path.startswith("/events") and not path.startswith("/events/") or path == "/":
+            elif path.startswith("/events") and not path.startswith("/events/") or path == "/":
                 # Cache event listings for 5 minutes
                 response.headers["Cache-Control"] = "public, max-age=300"
                 response.headers["Vary"] = "Accept-Encoding"
@@ -34,11 +39,6 @@ class CacheControlMiddleware(BaseHTTPMiddleware):
                 # Cache individual events for 5 minutes
                 response.headers["Cache-Control"] = "public, max-age=300"
                 response.headers["Vary"] = "Accept-Encoding"
-            elif "Authorization" in request.headers:
-                # Private endpoints (authenticated) - no cache
-                response.headers["Cache-Control"] = "private, no-cache, no-store, must-revalidate"
-                response.headers["Pragma"] = "no-cache"
-                response.headers["Expires"] = "0"
             else:
                 # Default for other GET requests
                 response.headers["Cache-Control"] = "public, max-age=60"

@@ -10,12 +10,29 @@ export const eventsApi = {
     status?: string;
     category?: string;
   }): Promise<PaginatedResponse<Event>> => {
-    const response = await apiClient.get<PaginatedResponse<Event>>('/events', { params });
+    const response = await apiClient.get<PaginatedResponse<Event>>('/events', {
+      params: {
+        ...params,
+        _ts: Date.now(),
+      },
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+    });
     return response.data;
   },
 
   getEvent: async (id: string): Promise<Event> => {
-    const response = await apiClient.get<Event>(`/events/${id}`);
+    const response = await apiClient.get<Event>(`/events/${id}`, {
+      params: {
+        _ts: Date.now(),
+      },
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+    });
     return response.data;
   },
 

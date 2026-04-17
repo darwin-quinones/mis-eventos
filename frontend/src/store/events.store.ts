@@ -95,10 +95,13 @@ export const useEventsStore = create<EventsState>((set) => ({
     try {
       const event = await eventsApi.updateEvent(id, data);
       
-      set({
+      set((state) => ({
         currentEvent: event,
+        events: state.events.map((existingEvent) =>
+          String(existingEvent.id) === String(id) ? event : existingEvent
+        ),
         isLoading: false,
-      });
+      }));
       
       return event;
     } catch (error: any) {
